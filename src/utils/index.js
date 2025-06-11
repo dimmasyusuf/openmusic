@@ -19,3 +19,17 @@ export class NotFoundError extends ClientError {
     this.name = 'NotFoundError';
   }
 }
+
+export class AuthenticationError extends ClientError {
+  constructor(message) {
+    super(message, 401);
+    this.name = 'AuthenticationError';
+  }
+}
+
+export class AuthorizationError extends ClientError {
+  constructor(message) {
+    super(message, 403);
+    this.name = 'AuthorizationError';
+  }
+}

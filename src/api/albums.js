@@ -35,8 +35,8 @@ export default class AlbumsHandler {
   }
 
   async getAlbumHandler(request) {
-    const { id } = request.params;
-    const album = await this.service.getAlbum(id);
+    const { id: albumId } = request.params;
+    const album = await this.service.getAlbum(albumId);
 
     return {
       status: 'success',
@@ -66,30 +66,30 @@ export default class AlbumsHandler {
 
   async putAlbumHandler(request) {
     this.validator.validateAlbumPayload(request.payload);
-    const { id } = request.params;
+    const { id: albumId } = request.params;
     const { name, year } = request.payload;
 
-    await this.service.putAlbum(id, { name, year });
+    await this.service.putAlbum(albumId, { name, year });
 
     return {
       status: 'success',
       message: 'Album updated successfully',
       data: {
-        id,
+        albumId,
       },
     };
   }
 
   async deleteAlbumHandler(request) {
-    const { id } = request.params;
+    const { id: albumId } = request.params;
 
-    await this.service.deleteAlbum(id);
+    await this.service.deleteAlbum(albumId);
 
     return {
       status: 'success',
       message: 'Album deleted successfully',
       data: {
-        id,
+        albumId,
       },
     };
   }

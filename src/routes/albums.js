@@ -1,4 +1,4 @@
-const albumRoutes = (handler) => [
+const albumsRoute = (handler) => [
   {
     method: 'GET',
     path: '/albums',
@@ -26,4 +26,4 @@ const albumRoutes = (handler) => [
   },
 ];
 
-export default albumRoutes;
+export default albumsRoute;

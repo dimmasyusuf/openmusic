@@ -8,9 +8,7 @@ export default class SongsService {
     this.pool = new Pool();
   }
 
-  async getSongs({
-    title, year, performer, genre, albumId,
-  } = {}) {
+  async getSongs({ title, year, performer, genre, albumId } = {}) {
     let query = 'SELECT * FROM songs';
     const values = [];
     const conditions = [];
@@ -61,7 +59,7 @@ export default class SongsService {
     const result = await this.pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Song not found');
+      throw new NotFoundError('The song you are looking for was not found.');
     }
 
     return result.rows.map((row) => ({
@@ -77,9 +75,7 @@ export default class SongsService {
     }))[0];
   }
 
-  async postSong({
-    title, year, genre, performer, duration, albumId,
-  }) {
+  async postSong({ title, year, genre, performer, duration, albumId }) {
     const id = nanoid(16);
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
@@ -102,15 +98,13 @@ export default class SongsService {
     const result = await this.pool.query(query);
 
     if (!result.rows[0].id) {
-      throw new InvariantError('Song failed to be created');
+      throw new InvariantError('Failed to create song. Please try again.');
     }
 
     return result.rows[0].id;
   }
 
-  async putSong(id, {
-    title, year, genre, performer, duration, albumId,
-  }) {
+  async putSong(id, { title, year, genre, performer, duration, albumId }) {
     const updatedAt = new Date().toISOString();
 
     const query = {
@@ -121,7 +115,9 @@ export default class SongsService {
     const result = await this.pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Error updating song. Id not found');
+      throw new NotFoundError(
+        'The song you are trying to update was not found.'
+      );
     }
 
     return result.rows[0].id;
@@ -136,7 +132,9 @@ export default class SongsService {
     const result = await this.pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Song failed to be deleted. Id not found');
+      throw new NotFoundError(
+        'The song you are trying to delete was not found.'
+      );
     }
 
     return result.rows[0].id;

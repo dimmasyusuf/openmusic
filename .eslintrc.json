@@ -9,8 +9,12 @@
     "sourceType": "module"
   },
   "rules": {
+    "comma-dangle": "off",
+    "implicit-arrow-linebreak": "off",
     "import/extensions": ["error", "always"],
+    "import/no-extraneous-dependencies": ["off"],
     "max-classes-per-file": ["off"],
-    "no-console": "off"
+    "no-console": "off",
+    "object-curly-newline": "off"
   }
 }

@@ -1,16 +1,10 @@
 import Hapi from '@hapi/hapi';
+import Jwt from '@hapi/jwt';
 import 'dotenv/config.js';
 
-import albumsPlugin from './plugins/albums.js';
-import songsPlugin from './plugins/songs.js';
-
-import AlbumsService from './services/albums.js';
-import SongsService from './services/songs.js';
+import plugins from './plugins/index.js';
 
 import { ClientError } from './utils/index.js';
-
-import AlbumsValidator from './validators/albums.js';
-import SongsValidator from './validators/songs.js';
 
 const init = async () => {
   const server = Hapi.server({
@@ -23,22 +17,25 @@ const init = async () => {
     },
   });
 
-  await server.register([
-    {
-      plugin: albumsPlugin,
-      options: {
-        service: new AlbumsService(),
-        validator: AlbumsValidator,
-      },
+  await server.register([{ plugin: Jwt }]);
+
+  server.auth.strategy('openmusic_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
     },
-    {
-      plugin: songsPlugin,
-      options: {
-        service: new SongsService(),
-        validator: SongsValidator,
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
       },
-    },
-  ]);
+    }),
+  });
+
+  await server.register(plugins);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;

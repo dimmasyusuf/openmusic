@@ -40,10 +40,10 @@ export default class AlbumsService {
     }));
   }
 
-  async getAlbum(id) {
+  async getAlbum(albumId) {
     const query = {
       text: 'SELECT * FROM albums WHERE id = $1',
-      values: [id],
+      values: [albumId],
     };
 
     const result = await this.pool.query(query);
@@ -62,7 +62,7 @@ export default class AlbumsService {
 
     const songsQuery = {
       text: 'SELECT id, title, performer FROM songs WHERE album_id = $1',
-      values: [id],
+      values: [albumId],
     };
 
     const songsResult = await this.pool.query(songsQuery);
@@ -89,39 +89,43 @@ export default class AlbumsService {
     const result = await this.pool.query(query);
 
     if (!result.rows[0].id) {
-      throw new InvariantError('Album failed to be created');
+      throw new InvariantError('Failed to create album. Please try again.');
     }
 
     return result.rows[0].id;
   }
 
-  async putAlbum(id, { name, year }) {
+  async putAlbum(albumId, { name, year }) {
     const updatedAt = new Date().toISOString();
 
     const query = {
       text: 'UPDATE albums SET name = $1, year = $2, updated_at = $3 WHERE id = $4 RETURNING id',
-      values: [name, year, updatedAt, id],
+      values: [name, year, updatedAt, albumId],
     };
 
     const result = await this.pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Error updating album. Id not found');
+      throw new NotFoundError(
+        'The album you are trying to update was not found.'
+      );
     }
 
     return result.rows[0].id;
   }
 
-  async deleteAlbum(id) {
+  async deleteAlbum(albumId) {
     const query = {
       text: 'DELETE FROM albums WHERE id = $1 RETURNING id',
-      values: [id],
+      values: [albumId],
     };
 
     const result = await this.pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Album failed to be deleted. Id not found');
+      throw new NotFoundError(
+        'The album you are trying to delete was not found.'
+      );
     }
 
     return result.rows[0].id;
